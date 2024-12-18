@@ -1,0 +1,59 @@
+def calculate_income_tax(income):
+    """Calculates income tax based on Indian income tax rates.
+
+    Args:
+        income: The annual income in Indian Rupees.
+
+    Returns:
+        A dictionary containing the calculated tax amount, tax slab, and total payable tax.
+        Returns None if input is invalid.
+    """
+
+    # Input validation
+    if not isinstance(income, (int, float)) or income < 0:
+        print("Invalid input. Please enter a non-negative numerical value for income.")
+        return None
+
+ # Indian Income Tax Slab Rates (2023-24) -  Simplified for demonstration.
+    #  Use official government resources for accurate calculation.
+    tax_slabs = [
+        {"income_limit": 300000, "tax_rate": 0},  # Up to 3 lakhs - No tax
+        {"income_limit": 600000, "tax_rate": 0.05},  # 3 to 6 lakhs - 5%
+        {"income_limit": 900000, "tax_rate": 0.10},  # 6 to 9 lakhs - 10%
+        {"income_limit": 1200000, "tax_rate": 0.15},  # 9 to 12 lakhs - 15%
+        {"income_limit": 1500000, "tax_rate": 0.20},  # 12 to 15 lakhs - 20%
+        {"income_limit": float('inf'), "tax_rate": 0.30},  # Above 15 lakhs - 30%
+    ]
+
+    tax_amount = 0
+    taxable_income = 0
+    tax_slab = "None"
+  for slab in tax_slabs:
+        if income <= slab["income_limit"]:
+            taxable_income = income
+            tax_slab = f"Upto {slab['income_limit']} Rupees"
+            tax_amount = income * slab["tax_rate"]
+            break
+        else:
+            taxable_income = slab["income_limit"]
+            tax_amount += (slab["income_limit"] - tax_slabs[tax_slabs.index(slab) - 1]["income_limit"]) * slab["tax_rate"] if tax_slabs.index(slab) > 0 else 0
+
+    return {
+        "tax_amount": round(tax_amount, 2),
+        "tax_slab": tax_slab,
+        "total_payable_tax": round(tax_amount, 2)
+    }
+
+
+if __name__ == "__main__":
+    while True:
+        try:
+            income = float(input("Enter your annual income (in Rupees): "))
+            result = calculate_income_tax(income)
+            if result:
+                print(f"\nTaxable income: {result['tax_slab']}")
+                print(f"Calculated tax amount: {result['tax_amount']} Rupees")
+                print(f"Total Payable Tax: {result['total_payable_tax']} Rupees")
+                break  # Exit the loop if input is valid and processed
+        except ValueError:
+            print("Invalid input. Please enter a number.")
